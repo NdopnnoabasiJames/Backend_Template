@@ -7,64 +7,64 @@
 
 A production-ready NestJS starter template with authentication, authorization, email/SMS notifications, and marketing capabilities built-in. Perfect for jumpstarting SaaS applications, service marketplaces, or any project requiring robust user management.
 
-## ✨ Features
+## Features
 
-- 🔐 **Complete Authentication System**
+- **Complete Authentication System**
   - JWT-based authentication with configurable expiration
   - Phone-based signup and login (with SMS OTP verification)
   - Email-based authentication (optional)
   - Password reset via OTP or email token
   - Rate-limited OTP requests to prevent abuse
 
-- 👥 **Role-Based Access Control (RBAC)**
+- **Role-Based Access Control (RBAC)**
   - Built-in roles: USER and ADMIN
   - Custom guard and decorator patterns
   - Easy to extend with additional roles
 
-- 📧 **Email Integration**
+- **Email Integration**
   - Nodemailer with Gmail SMTP
   - Email templates for verification and password reset
   - Marketing email campaigns
 
-- 📱 **SMS Integration**
+- **SMS Integration**
   - Termii API integration (configurable for multiple countries)
   - Phone number validation and formatting
   - Bulk SMS capabilities
 
-- 🎯 **Marketing & Notifications**
+- **Marketing & Notifications**
   - User preference management (opt-in/opt-out)
   - Category-based subscriptions
   - Scheduled vs immediate notifications
   - Campaign success tracking
 
-- ✅ **Data Validation**
+- **Data Validation**
   - Global validation pipes
   - DTO validation with class-validator
   - Type-safe schemas with Mongoose
 
-- 🏗️ **Best Practices**
+- **Best Practices**
   - Modular architecture
   - Environment-based configuration
   - Comprehensive error handling
   - Security-first design
 
-## 🎯 Who This Is For
+## Who This Is For
 
-✅ **Perfect for:**
+**Perfect for:**
 - SaaS applications with user accounts
 - Service marketplaces (delivery, booking, on-demand services)
 - Mobile app backends requiring phone authentication
 - Projects needing marketing/notification features
 - Teams wanting a production-ready auth foundation
 
-❌ **Not ideal for:**
+**Not ideal for:**
 - Simple REST APIs without user accounts
 - Real-time applications (no WebSocket support included)
 - Projects requiring payment processing out-of-the-box
 - Content management systems
 - Static websites
 
-## 📋 Prerequisites
+## Prerequisites
 
 - **Node.js** 18+ ([download](https://nodejs.org/))
 - **MongoDB** 6+ (local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
@@ -74,7 +74,7 @@ A production-ready NestJS starter template with authentication, authorization, e
 - **Termii Account** - For SMS functionality ([sign up](https://termii.com))
 - **Gmail Account** - For email notifications
 
-## ⚡ Quick Start (5 Minutes)
+## Quick Start (5 Minutes)
 
 1. **Clone and install:**
    ```bash
@@ -117,7 +117,7 @@ A production-ready NestJS starter template with authentication, authorization, e
      }'
    ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Required Environment Variables
 
@@ -154,7 +154,7 @@ FRONTEND_URL=http://localhost:3001
 
 See [.env.example](.env.example) for complete configuration options.
 
-## 📚 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/v1/auth/signup` - Register new user
@@ -177,7 +177,7 @@ See [.env.example](.env.example) for complete configuration options.
 
 For complete API documentation, see [ONBOARDING.md](ONBOARDING.md#api-endpoints-reference).
 
-## 🔐 Authentication Flow
+## Authentication Flow
 
 All protected routes require JWT token in Authorization header:
 
@@ -191,7 +191,7 @@ curl -X GET http://localhost:3000/api/v1/user/profile \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -205,7 +205,7 @@ src/
 └── app.module.ts   # Root module
 ```
 
-## 🚀 Available Scripts
+## Available Scripts
 
 ```bash
 # Development
@@ -225,7 +225,7 @@ npm run lint           # Run ESLint
 npm run format         # Format with Prettier
 ```
 
-## 🛠️ Customization
+## Customization
 
 ### Adding New Roles
 
@@ -284,7 +284,7 @@ Remove unwanted modules from `src/app.module.ts`:
 
 For detailed customization guide, see [ONBOARDING.md](ONBOARDING.md).
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Cannot connect to MongoDB
 - Ensure MongoDB is running: `mongosh` or check service status
@@ -307,21 +307,21 @@ For detailed customization guide, see [ONBOARDING.md](ONBOARDING.md).
 - Check token expiration (default 30 minutes)
 - Ensure correct format: `Bearer <token>`
 
-## 📖 Documentation
+## Documentation
 
 - [ONBOARDING.md](ONBOARDING.md) - Complete technical documentation
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
 - [LICENSE](LICENSE) - MIT License
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [NestJS](https://nestjs.com/)
 - Authentication powered by [Passport](http://www.passportjs.org/)
@@ -330,4 +330,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Ready to build something awesome?** Star this repo and start customizing! 🚀
+**Ready to build something awesome?** Star this repo and start customizing!
