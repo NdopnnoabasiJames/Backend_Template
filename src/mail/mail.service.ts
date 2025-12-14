@@ -36,13 +36,14 @@ export class MailService {
   }
   
   async sendVerificationOTP(email: string, otp: string, firstName: string) {
+    const appName = this.configService.get<string>('APP_NAME') || 'NestJS Auth Starter';
     const mailOptions = {
       from: this.configService.get<string>('EMAIL_USER'),
       to: email,
       subject: 'Email Verification',
       html: `
         <h1>Hello ${firstName},</h1>
-        <p>Thank you for registering with ServiceCall. Please use the following OTP to verify your email address:</p>
+        <p>Thank you for registering with ${appName}. Please use the following OTP to verify your email address:</p>
         <h2 style="background-color: #f2f2f2; padding: 10px; text-align: center; font-size: 24px; letter-spacing: 5px;">${otp}</h2>
         <p>This OTP will expire in 10 minutes.</p>
         <p>If you did not create an account with us, please ignore this email.</p>
@@ -53,25 +54,27 @@ export class MailService {
   }
   
   async sendMarketingEmail(email: string, title: string, content: string, category: string) {
+    const appName = this.configService.get<string>('APP_NAME') || 'NestJS Auth Starter';
+    const currentYear = new Date().getFullYear();
     const mailOptions = {
       from: this.configService.get<string>('EMAIL_USER'),
       to: email,
       subject: title,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333;">ServiceCall</h1>
+          <h1 style="color: #333;">${appName}</h1>
           <h2>${title}</h2>
           <div style="margin: 20px 0;">
             ${content}
           </div>
           <hr style="margin: 30px 0;">
           <p style="font-size: 12px; color: #666;">
-            You're receiving this email because you're subscribed to ${category} notifications from ServiceCall.
+            You're receiving this email because you're subscribed to ${category} notifications from ${appName}.
             <br>
             To unsubscribe or manage your preferences, please contact support or update your account settings.
           </p>
           <p style="font-size: 12px; color: #666;">
-            © 2025 ServiceCall. All rights reserved.
+            © ${currentYear} ${appName}. All rights reserved.
           </p>
         </div>
       `,

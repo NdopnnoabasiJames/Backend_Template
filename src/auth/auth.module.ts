@@ -18,7 +18,7 @@ import { AuthService } from './auth.service';
       inject: [ConfigService],
       useFactory:(configService:ConfigService) => ({
         secret: configService.getOrThrow('JWT_SECRET'),
-        signOptions: { expiresIn: '30m' }, //Token will last 30 minutes
+        signOptions: { expiresIn: configService.get('JWT_EXPIRY') || '30m' }, // Configurable token expiration
       }),
     }),
     PassportModule,

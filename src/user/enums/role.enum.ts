@@ -1,4 +1,4 @@
 export enum UserRole {
     USER = 'user',
-    ARTISAN = 'artisan',
+    ADMIN = 'admin', // Admin/privileged role - add more roles as needed (e.g., MODERATOR, MANAGER)
 }

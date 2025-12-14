@@ -21,14 +21,14 @@ export class NotificationController {
 
   @Post('marketing')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ARTISAN) // Assuming artisans can create marketing notifications
+  @Roles(UserRole.ADMIN) // Only admins can create marketing notifications
   async createMarketingNotification(@Body() createDto: CreateMarketingNotificationDto) {
     return this.notificationService.createMarketingNotification(createDto);
   }
 
   @Get('marketing')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ARTISAN)
+  @Roles(UserRole.ADMIN)
   async getMarketingNotifications(
     @Query('limit') limit: string = '10',
     @Query('skip') skip: string = '0'
@@ -41,14 +41,14 @@ export class NotificationController {
 
   @Post('marketing/:id/send')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ARTISAN)
+  @Roles(UserRole.ADMIN)
   async sendMarketingNotification(@Param('id') id: string) {
     return this.notificationService.sendMarketingNotification(id);
   }
 
   @Put('marketing/:id/schedule')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ARTISAN)
+  @Roles(UserRole.ADMIN)
   async scheduleMarketingNotification(
     @Param('id') id: string,
     @Body('scheduledDate') scheduledDate: string

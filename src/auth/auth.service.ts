@@ -8,6 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
@@ -18,12 +19,22 @@ import { SmsService } from 'src/sms/sms.service';
 
 @Injectable()
 export class AuthService {
+  private otpExpiryMinutes: number;
+  private otpDailyLimit: number;
+  private otpMinIntervalMinutes: number;
+
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
     private mailService: MailService,
     private smsService: SmsService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    // Load OTP configuration from environment
+    this.otpExpiryMinutes = parseInt(this.configService.get('OTP_EXPIRY_MINUTES') || '10', 10);
+    this.otpDailyLimit = parseInt(this.configService.get('OTP_DAILY_LIMIT') || '3', 10);
+    this.otpMinIntervalMinutes = parseInt(this.configService.get('OTP_MIN_INTERVAL_MINUTES') || '5', 10);
+  }
 
   async signUp(createUserDto: CreateUserDto) {
     const { firstName, lastName, password, email, phone, ...rest} = createUserDto;
@@ -164,15 +175,15 @@ export class AuthService {
     }
     
     // Check if user has exceeded daily limit
-    if (user.otpRequestCount >= 3) {
+    if (user.otpRequestCount >= this.otpDailyLimit) {
       throw new ConflictException('You have exceeded the maximum number of OTP requests for today. Please try again tomorrow.');
     }
     
-    // Check if user is requesting too frequently (5-minute interval)
+    // Check if user is requesting too frequently
     if (user.lastOtpRequestTime) {
-      const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-      if (user.lastOtpRequestTime > fiveMinutesAgo) {
-        throw new ConflictException('Please wait at least 5 minutes before requesting a new OTP.');
+      const minIntervalAgo = new Date(now.getTime() - this.otpMinIntervalMinutes * 60 * 1000);
+      if (user.lastOtpRequestTime > minIntervalAgo) {
+        throw new ConflictException(`Please wait at least ${this.otpMinIntervalMinutes} minutes before requesting a new OTP.`);
       }
     }
 
@@ -185,7 +196,7 @@ export class AuthService {
       
       // Only save OTP to database if SMS was sent successfully
       user.resetPasswordOTP = otp;
-      user.resetPasswordOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      user.resetPasswordOTPExpires = new Date(Date.now() + this.otpExpiryMinutes * 60 * 1000);
       user.otpRequestCount += 1;
       user.lastOtpRequestTime = now;
       
@@ -196,7 +207,7 @@ export class AuthService {
       
       // Save OTP anyway so user can potentially verify later
       user.resetPasswordOTP = otp;
-      user.resetPasswordOTPExpires = new Date(Date.now() + 10 * 60 * 1000);
+      user.resetPasswordOTPExpires = new Date(Date.now() + this.otpExpiryMinutes * 60 * 1000);
       user.otpRequestCount += 1;
       user.lastOtpRequestTime = now;
       
@@ -229,15 +240,15 @@ export class AuthService {
     }
     
     // Check if user has exceeded daily limit
-    if (user.otpRequestCount >= 3) {
+    if (user.otpRequestCount >= this.otpDailyLimit) {
       throw new ConflictException('You have exceeded the maximum number of OTP requests for today. Please try again tomorrow.');
     }
     
-    // Check if user is requesting too frequently (5-minute interval)
+    // Check if user is requesting too frequently
     if (user.lastOtpRequestTime) {
-      const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-      if (user.lastOtpRequestTime > fiveMinutesAgo) {
-        throw new ConflictException('Please wait at least 5 minutes before requesting a new OTP.');
+      const minIntervalAgo = new Date(now.getTime() - this.otpMinIntervalMinutes * 60 * 1000);
+      if (user.lastOtpRequestTime > minIntervalAgo) {
+        throw new ConflictException(`Please wait at least ${this.otpMinIntervalMinutes} minutes before requesting a new OTP.`);
       }
     }
     
@@ -250,7 +261,7 @@ export class AuthService {
       
       // Only save OTP to database if SMS was sent successfully
       user.phoneVerificationOTP = otp;
-      user.phoneVerificationOTPExpires = new Date(Date.now() + 10 * 60 * 1000);
+      user.phoneVerificationOTPExpires = new Date(Date.now() + this.otpExpiryMinutes * 60 * 1000);
       user.otpRequestCount += 1;
       user.lastOtpRequestTime = now;
       
@@ -261,7 +272,7 @@ export class AuthService {
       
       // Save OTP anyway so user can potentially verify later
       user.phoneVerificationOTP = otp;
-      user.phoneVerificationOTPExpires = new Date(Date.now() + 10 * 60 * 1000);
+      user.phoneVerificationOTPExpires = new Date(Date.now() + this.otpExpiryMinutes * 60 * 1000);
       user.otpRequestCount += 1;
       user.lastOtpRequestTime = now;
       
@@ -381,7 +392,7 @@ export class AuthService {
 
     const token = crypto.randomBytes(20).toString('hex');
     user.resetPasswordToken = token;
-    user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000);
+    user.resetPasswordExpires = new Date(Date.now() + this.otpExpiryMinutes * 60 * 1000);
     await user.save();
     await this.mailService.sendResetToken(email, token, user.firstName);
   }

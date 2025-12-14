@@ -30,9 +30,9 @@ export class UserController {
 
   @Get('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ARTISAN)
+  @Roles(UserRole.ADMIN)
   getAdminData() {
-    return { message: 'This is protected data for artisans only' };
+    return { message: 'This is protected data for admins only' };
   }
 
   @Get(':id')

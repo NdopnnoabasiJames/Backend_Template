@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { DatabaseModule } from './Database/database.module';
+import { DatabaseModule } from './database/database.module';
 import { MailModule } from './mail/mail.module';
 import { SmsModule } from './sms/sms.module';
 import { NotificationModule } from './notification/notification.module';

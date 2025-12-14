@@ -1,0 +1,55 @@
+# Docker Compose for Production
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: nestjs-mongodb-prod
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-password123}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-nestjs-starter}
+    volumes:
+      - mongodb_prod_data:/data/db
+    networks:
+      - nestjs-prod-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # NestJS Application (Production)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: nestjs-app-prod
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - nestjs-prod-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  nestjs-prod-network:
+    driver: bridge
+
+volumes:
+  mongodb_prod_data:
+    driver: local
