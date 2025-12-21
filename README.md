@@ -284,6 +284,71 @@ Remove unwanted modules from `src/app.module.ts`:
 
 For detailed customization guide, see [ONBOARDING.md](ONBOARDING.md).
 
+## Optional: Stripe Payments
+
+This template includes an **optional, minimal Stripe integration** for one-time payments. It's designed as a learning resource and starting point, not a complete billing system.
+
+### What's Included
+
+- Payment Intent creation (one-time payments)
+- Webhook handling for payment events
+- Clean, beginner-friendly code with extensive comments
+- Easy to remove if not needed
+
+### Quick Setup
+
+1. **Install and enable:**
+   ```bash
+   npm install  # stripe is already in package.json
+   ```
+
+2. **Get your Stripe keys:**
+   - Sign up at [stripe.com](https://stripe.com)
+   - Get your Secret Key from [Dashboard > API Keys](https://dashboard.stripe.com/apikeys)
+
+3. **Add to `.env`:**
+   ```env
+   STRIPE_SECRET_KEY=sk_test_your_key_here
+   STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+   ```
+
+4. **Enable in `src/app.module.ts`:**
+   ```typescript
+   import { StripeModule } from './stripe/stripe.module';
+   
+   @Module({
+     imports: [
+       // ... other modules
+       StripeModule,  // Uncomment this line
+     ],
+   })
+   ```
+
+### New Endpoints
+
+- `POST /stripe/create-payment-intent` - Create a payment (requires auth)
+- `POST /stripe/webhook` - Stripe webhook handler (public)
+
+### Complete Documentation
+
+See [STRIPE.md](STRIPE.md) for:
+- Complete setup guide
+- Payment flow explanation
+- API usage examples
+- Webhook configuration
+- Testing with test cards
+- How to extend or remove
+
+### Not Included
+
+This integration intentionally **does not** include:
+- Subscriptions or recurring billing
+- Customer management
+- Invoice generation
+- Complex pricing models
+
+These are app-specific features you should implement based on your needs. The current implementation provides a solid foundation to build upon.
+
 ## Troubleshooting
 
 ### Cannot connect to MongoDB

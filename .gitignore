@@ -14,6 +14,7 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+/PROJECT_STATUS.md
 
 # Tests
 /coverage

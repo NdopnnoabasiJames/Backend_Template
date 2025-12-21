@@ -6,6 +6,7 @@ import { MailModule } from './mail/mail.module';
 import { SmsModule } from './sms/sms.module';
 import { NotificationModule } from './notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
+// import { StripeModule } from './stripe/stripe.module'; // Uncomment to enable Stripe payments
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { ConfigModule } from '@nestjs/config';
     DatabaseModule, 
     MailModule,
     SmsModule,
-    NotificationModule
+    NotificationModule,
+    // StripeModule, // Uncomment to enable Stripe payments
   ],
   controllers: [],
   providers: [],
