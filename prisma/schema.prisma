@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  firstName String
+  lastName  String
+  email     String  @unique
+  password  String
+  phone     String  @unique
+  role      UserRole @default(USER)
+  isActive  Boolean  @default(true)
+
+  isPhoneVerified            Boolean   @default(false)
+  phoneVerificationOTP       String?
+  phoneVerificationOTPExpires DateTime?
+  otpRequestCount            Int       @default(0)
+  lastOtpRequestTime         DateTime?
+
+  resetPasswordOTP        String?
+  resetPasswordOTPExpires DateTime?
+  resetPasswordToken      String?
+  resetPasswordExpires    DateTime?
+
+  isEmailVerified            Boolean   @default(true)
+  emailVerificationOTP       String?
+  emailVerificationOTPExpires DateTime?
+
+  marketingPreferences UserMarketingPreference?
+
+  @@index([email])
+  @@index([phone])
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model MarketingNotification {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title   String
+  content String @db.Text
+  category MarketingCategory
+  type     NotificationType @default(EMAIL)
+  timing   NotificationTiming @default(IMMEDIATE)
+
+  scheduledDate DateTime?
+  recipients String[]
+
+  sent         Boolean   @default(false)
+  sentAt       DateTime?
+  successCount Int       @default(0)
+  failureCount Int       @default(0)
+
+  metadata Json?
+
+  @@index([sent])
+  @@index([scheduledDate])
+  @@map("marketing_notifications")
+}
+
+model UserMarketingPreference {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  email  String
+
+  subscribedToPromotional   Boolean @default(true)
+  subscribedToNewsletter    Boolean @default(true)
+  subscribedToProductUpdates Boolean @default(true)
+  subscribedToEvents        Boolean @default(true)
+
+  preferEmail Boolean @default(true)
+  preferSMS   Boolean @default(false)
+  preferPush  Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([email])
+  @@map("user_marketing_preferences")
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationTiming {
+  IMMEDIATE
+  SCHEDULED
+  RECURRING
+}
+
+enum MarketingCategory {
+  PROMOTIONAL
+  NEWSLETTER
+  PRODUCT_UPDATES
+  EVENTS
+}

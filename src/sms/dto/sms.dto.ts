@@ -1,5 +1,5 @@
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { NotificationTiming, NotificationType } from "src/schemas/notification.schema";
+import { NotificationTiming, NotificationType } from "@prisma/client";
 
 export class CreateSmsNotificationDto {
   @IsString()

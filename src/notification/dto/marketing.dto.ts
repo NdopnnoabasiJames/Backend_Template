@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsArray, IsBoolean, IsDateString } from "class-validator";
-import { MarketingCategory, NotificationTiming } from "src/schemas/notification.schema";
+import { MarketingCategory, NotificationTiming } from "@prisma/client";
 
 export class CreateMarketingNotificationDto {
   @IsString()
@@ -33,12 +33,31 @@ export class CreateMarketingNotificationDto {
 export class UpdateMarketingPreferenceDto {
   @IsBoolean()
   @IsOptional()
-  optedIn?: boolean;
+  subscribedToPromotional?: boolean;
 
-  @IsArray()
-  @IsEnum(MarketingCategory, { each: true })
+  @IsBoolean()
   @IsOptional()
-  subscribedCategories?: MarketingCategory[];
+  subscribedToNewsletter?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  subscribedToProductUpdates?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  subscribedToEvents?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  preferEmail?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  preferSMS?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  preferPush?: boolean;
 }
 
 export class SendMarketingEmailDto {

@@ -1,11 +1,14 @@
-# NestJS Authentication & Notification Starter Template
+# NestJS Authentication & Notification Starter Template (PostgreSQL + Prisma)
 
 ![NestJS](https://img.shields.io/badge/NestJS-v10-E0234E?logo=nestjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-v5-3178C6?logo=typescript)
-![MongoDB](https://img.shields.io/badge/MongoDB-v8-47A248?logo=mongodb)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v16-4169E1?logo=postgresql)
+![Prisma](https://img.shields.io/badge/Prisma-v6-2D3748?logo=prisma)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 A production-ready NestJS starter template with authentication, authorization, email/SMS notifications, and marketing capabilities built-in. Perfect for jumpstarting SaaS applications, service marketplaces, or any project requiring robust user management.
+
+> **📝 Note:** This is the **PostgreSQL + Prisma variant**. For the MongoDB version, check the `main` branch.
 
 ## Features
 
@@ -40,7 +43,13 @@ A production-ready NestJS starter template with authentication, authorization, e
 - **Data Validation**
   - Global validation pipes
   - DTO validation with class-validator
-  - Type-safe schemas with Mongoose
+  - Type-safe schemas with Prisma
+
+- **PostgreSQL & Prisma**
+  - Type-safe database client
+  - Automatic migrations
+  - Schema introspection with Prisma Studio
+  - Relational data modeling
 
 - **Best Practices**
   - Modular architecture
@@ -67,7 +76,7 @@ A production-ready NestJS starter template with authentication, authorization, e
 ## Prerequisites
 
 - **Node.js** 18+ ([download](https://nodejs.org/))
-- **MongoDB** 6+ (local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
+- **PostgreSQL** 14+ (local or cloud: [Railway](https://railway.app/), [Supabase](https://supabase.com/), [Heroku](https://www.heroku.com/))
 - **npm** or **yarn**
 
 ### Optional (for full features):
@@ -86,23 +95,38 @@ A production-ready NestJS starter template with authentication, authorization, e
 2. **Set up environment:**
    ```bash
    cp .env.example .env
-   # Edit .env - minimum required: DATABASE_URI, JWT_SECRET
+   # Edit .env - minimum required: DATABASE_URL, JWT_SECRET
    ```
 
-3. **Start MongoDB:**
+3. **Set up PostgreSQL:**
    ```bash
-   # Using Docker:
-   docker run -d -p 27017:27017 --name mongodb mongo:latest
+   # Option 1: Using Docker (easiest for local development)
+   docker run -d \
+     --name postgres \
+     -e POSTGRES_PASSWORD=password \
+     -e POSTGRES_DB=nestjs_starter \
+     -p 5432:5432 \
+     postgres:16
    
-   # Or use MongoDB Atlas (cloud) - update DATABASE_URI in .env
+   # Option 2: Use cloud PostgreSQL (Railway, Supabase, Heroku)
+   # Update DATABASE_URL in .env with your connection string
    ```
 
-4. **Run the application:**
+4. **Run Prisma migrations:**
+   ```bash
+   npm run prisma:migrate
+   # This creates your database tables
+   
+   # Optional: Open Prisma Studio to view/edit data
+   npm run prisma:studio
+   ```
+
+5. **Run the application:**
    ```bash
    npm run start:dev
    ```
 
-5. **Test the API:**
+6. **Test the API:**
    ```bash
    # Register a new user
    curl -X POST http://localhost:3000/api/v1/auth/signup \
@@ -124,7 +148,7 @@ A production-ready NestJS starter template with authentication, authorization, e
 ```env
 # Application
 APP_NAME=My Application
-DATABASE_URI=mongodb://localhost:27017/my-app
+DATABASE_URL=postgresql://postgres:password@localhost:5432/nestjs_starter?schema=public
 JWT_SECRET=your-super-secret-jwt-key-change-this
 
 # Email (for Gmail)
@@ -197,12 +221,15 @@ curl -X GET http://localhost:3000/api/v1/user/profile \
 src/
 ├── auth/           # Authentication logic, guards, strategies
 ├── user/           # User CRUD operations
-├── database/       # MongoDB connection
+├── prisma/         # Prisma service and database client
 ├── mail/           # Email service (Nodemailer)
 ├── sms/            # SMS service (Termii)
 ├── notification/   # Marketing campaigns
 ├── main.ts         # Application entry point
 └── app.module.ts   # Root module
+
+prisma/
+└── schema.prisma   # Database schema and models
 ```
 
 ## Available Scripts
@@ -214,6 +241,12 @@ npm run start:dev      # Run with hot reload
 # Production
 npm run build          # Build for production
 npm run start:prod     # Run production build
+
+# Database (Prisma)
+npm run prisma:generate   # Generate Prisma Client
+npm run prisma:migrate    # Run migrations (dev)
+npm run prisma:studio     # Open Prisma Studio GUI
+npm run prisma:seed       # Seed database (if configured)
 
 # Testing
 npm run test           # Run unit tests
@@ -351,10 +384,16 @@ These are app-specific features you should implement based on your needs. The cu
 
 ## Troubleshooting
 
-### Cannot connect to MongoDB
-- Ensure MongoDB is running: `mongosh` or check service status
-- Verify `DATABASE_URI` in `.env`
+### Cannot connect to PostgreSQL
+- Ensure PostgreSQL is running: `psql -U postgres` or check service status
+- Verify `DATABASE_URL` in `.env` is correct
 - Check firewall/network settings
+- For Docker: Ensure container is running with `docker ps`
+
+### Prisma migrations failing
+- Ensure database exists: `createdb nestjs_starter`
+- Reset database if needed: `npx prisma migrate reset` (⚠️ deletes all data)
+- Check schema for syntax errors: `npx prisma validate`
 
 ### SMS not sending
 - Verify `TERMII_API_KEY` is correct
@@ -375,6 +414,7 @@ These are app-specific features you should implement based on your needs. The cu
 ## Documentation
 
 - [ONBOARDING.md](ONBOARDING.md) - Complete technical documentation
+- [POSTGRESQL_PRISMA.md](Documentations/POSTGRESQL_PRISMA.md) - PostgreSQL + Prisma guide (new!)
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
 - [LICENSE](LICENSE) - MIT License
 
@@ -389,6 +429,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with [NestJS](https://nestjs.com/)
+- Database with [PostgreSQL](https://www.postgresql.org/) and [Prisma](https://www.prisma.io/)
 - Authentication powered by [Passport](http://www.passportjs.org/)
 - Email by [Nodemailer](https://nodemailer.com/)
 - SMS by [Termii](https://termii.com/)
